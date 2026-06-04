@@ -140,16 +140,20 @@ function CustomerPanel({
           Receive payment
         </h1>
         <p className="mt-3 text-slate-600">
-          Use the same session code as the merchant — instant over room link.
+          {mode === "wifi"
+            ? "Use the same session code as the merchant — instant over room link."
+            : "No session code needed — allow microphone when prompted."}
         </p>
       </div>
 
-      <RoomCodeCard
-        role="customer"
-        roomCode={roomCode}
-        onRoomCodeChange={setRoomCode}
-        shareUrl={shareUrl}
-      />
+      {mode === "wifi" && (
+        <RoomCodeCard
+          role="customer"
+          roomCode={roomCode}
+          onRoomCodeChange={setRoomCode}
+          shareUrl={shareUrl}
+        />
+      )}
 
       <GlassCard>
         <TransportTabs
@@ -186,9 +190,9 @@ function CustomerPanel({
             size="lg"
             className="min-w-[240px]"
             disabled={
-              !isValid ||
-              (mode === "wifi" ? wifiActive : listening) ||
-              (mode === "ultrasonic" && status === "error")
+              (mode === "wifi" && (!isValid || wifiActive)) ||
+              (mode === "ultrasonic" &&
+                (listening || status !== "ready"))
             }
             onClick={handleConnect}
           >
@@ -196,9 +200,11 @@ function CustomerPanel({
               ? wifiActive
                 ? "Waiting for merchant…"
                 : "Join session"
-              : listening
-                ? "Listening…"
-                : "Listen for sound"}
+              : status !== "ready"
+                ? "Preparing audio…"
+                : listening
+                  ? "Listening…"
+                  : "Listen for sound"}
           </Button>
         </div>
 

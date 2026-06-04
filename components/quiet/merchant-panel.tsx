@@ -88,13 +88,15 @@ function MerchantPanel({
         </p>
       </div>
 
-      <RoomCodeCard
-        role="merchant"
-        roomCode={roomCode}
-        onRoomCodeChange={setRoomCode}
-        onRegenerate={regenerateRoom}
-        shareUrl={shareUrl}
-      />
+      {mode === "wifi" && (
+        <RoomCodeCard
+          role="merchant"
+          roomCode={roomCode}
+          onRoomCodeChange={setRoomCode}
+          onRegenerate={regenerateRoom}
+          shareUrl={shareUrl}
+        />
+      )}
 
       <GlassCard>
         <TransportTabs
@@ -142,7 +144,11 @@ function MerchantPanel({
         <Button
           size="lg"
           className="w-full"
-          disabled={busy || !isValid || (mode === "ultrasonic" && status === "error")}
+          disabled={
+            busy ||
+            (mode === "wifi" && !isValid) ||
+            (mode === "ultrasonic" && status !== "ready")
+          }
           onClick={handleSend}
         >
           {mode === "wifi" ? (
@@ -154,7 +160,9 @@ function MerchantPanel({
             ? "Sending…"
             : mode === "wifi"
               ? "Send payment"
-              : "Transmit sound wave"}
+              : status !== "ready"
+                ? "Preparing audio…"
+                : "Transmit sound wave"}
         </Button>
 
         {(relayError || (mode === "ultrasonic" && quietError)) && (

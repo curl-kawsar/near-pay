@@ -8,7 +8,7 @@ export function getInsecureContextHint(): string | null {
   if (window.isSecureContext) return null;
   const host = window.location.hostname;
   if (host === "localhost" || host === "127.0.0.1") return null;
-  return `Microphone access requires HTTPS on ${host}. Use "WiFi Room" mode, or run: bun run dev:https`;
+  return `Microphone needs HTTPS on ${host}. Use Room link, or run: bun run dev:https`;
 }
 
 export function getLanDevUrl(): string | null {
